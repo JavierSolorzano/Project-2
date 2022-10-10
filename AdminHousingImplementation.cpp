@@ -1,4 +1,4 @@
-//Javier Solorzano & David Saldana
+//David Saldana
 #include <iostream>
 #include <array>
 #include "AdminHousingStats.h"
@@ -14,41 +14,42 @@ void AdminHousingStats::viewRegion(){
 
   //passes variable to function to return state name
   setFileName();
-  openFile.open(fileName + txT);
+  openFile.open(currentRegion.fileName + txT);
  
   while(!openFile){//checks if file opened
     cout <<'\n'<< "Unable to identify state" << '\n';
     setFileName();
-    openFile.open(fileName + txT);
-    cout << fileName << ' ' << txT << '\n';
+    openFile.open(currentRegion.fileName + txT);
+    cout << currentRegion.fileName << ' ' << txT << '\n';
   }
   //opens file
   //manipulates format of values
   cout << fixed << setprecision(1) ;
   
   //reads in first to values for year ranges
-  openFile >> firstYear >> lastYear ;
+  openFile >> currentRegion.firstYear >> currentRegion.lastYear ;
 
-  yearNum = (lastYear - firstYear + 1); // Calculates size of dynamic arrays
+  currentRegion.yearNum = (currentRegion.lastYear - currentRegion.firstYear + 1); 
+  // Calculates size of dynamic arrays
 
   //reads in vacancy rate stat for each state/national
- for (index = 0; index < (yearNum); index++)
+ for (index = 0; index < (currentRegion.yearNum); index++)
   {
     openFile >> vacancyRate[index];
   }
 
   //reads in average home value stat for each state/national
- for (index = 0; index < (yearNum); index++)
+ for (index = 0; index < (currentRegion.yearNum); index++)
   {
     openFile >> avgHomeValue[index];
   }
 
   //reads in homeownership rate stat for each state/national
-  for (index = 0; index < (yearNum); index++)
+  for (index = 0; index < (currentRegion.yearNum); index++)
   {
     openFile >> homeownershipRate[index];
   }
-  displayRegionData(fileName);//calls print to display info
+  displayRegionData(currentRegion.fileName);//calls print to display info
   
  //closes the file
   openFile.close();
@@ -61,76 +62,76 @@ char repeatFunction ;
 //User Prompt
 cout << "What is the name of the region you wish to store data for?" << '\n'; 
 cout << "Use _ instead of spaces " << '\n';  
-cin >> fileName;
+cin >> currentRegion.fileName;
   
 //Updates Regions.txt  
 regionCreation.open("Regions.txt",std::ios_base::app); 
-regionCreation << '\n'<< fileName ;
+regionCreation << '\n'<< currentRegion.fileName ;
 regionCreation.close();
   
  //Creates file 
-regionCreation.open(fileName + txT);
+regionCreation.open(currentRegion.fileName + txT);
 //Use prompt to get year range for new region's data  
 cout << "What is the earliest year your data will reference?" << '\n';
-cin >> firstYear;
+cin >> currentRegion.firstYear;
 cout << "What is the latest year your data will reference?" << '\n';  
-cin >> lastYear;
+cin >> currentRegion.lastYear;
 //Checks years given by user if they are a valid year range  
-while(lastYear <= firstYear){
+while(currentRegion.lastYear <= currentRegion.firstYear){
 cout << "Invalid latest year given, it should be greater" << 
   "than the earliest year" 
   << '\n';
-cout << "First Year: " << firstYear << '\n'; 
+cout << "First Year: " << currentRegion.firstYear << '\n'; 
 cout << "Enter the latest year" << '\n' ;
-cin >>lastYear;  
+cin >> currentRegion.lastYear;  
 }  
 //calculates size of dynamic arrays
-yearNum = (lastYear - firstYear) + 1;
+currentRegion.yearNum = (currentRegion.lastYear - currentRegion.firstYear) + 1;
   
 //program recieves values from user that will be a region's data
 cout << '\n' << "Input data for Vacancy rate" << '\n';
-for(int i = 0; i < yearNum; i++)
+for(int i = 0; i < currentRegion.yearNum; i++)
 {  
-cout <<'\n' <<  "Year " << firstYear + i << " <-- ";
+cout <<'\n' <<  "Year " << currentRegion.firstYear + i << " <-- ";
 cin >> vacancyRate[i];  
 }
   
 cout <<'\n' << "Input data for Avg Home Value" << '\n';
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
-cout << '\n' <<"Year " << firstYear + i << " <-- ";
+cout << '\n' <<"Year " << currentRegion.firstYear + i << " <-- ";
 cin >> avgHomeValue[i];  
 }
 
 cout << '\n' << "Input data for Homeownership Rate" << '\n';
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
-cout << '\n' << "Year " << firstYear + i << " <-- " ;
+cout << '\n' << "Year " << currentRegion.firstYear + i << " <-- " ;
 cin >> homeownershipRate[i];  
 }
 //Program sends the values input by the user to the newly created file
 //Sends year range value  
-regionCreation << firstYear << '\n'<< lastYear << '\n';
+regionCreation << currentRegion.firstYear << '\n'<< currentRegion.lastYear << '\n';
 //Sends vacancy rate  
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionCreation << vacancyRate[i];
 regionCreation << '\n';  
 }
 //Sends average home value  
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionCreation << avgHomeValue[i];
 regionCreation << '\n';
 }
 
  //Sends homeownership rate
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionCreation << homeownershipRate[i];
 regionCreation << '\n'; 
 }
-displayRegionData(fileName);// prints the data of the newely made region   
+displayRegionData(currentRegion.fileName);// prints the data of the newely made region   
 }
 
 void AdminHousingStats::updateRegionStats(){
@@ -142,15 +143,15 @@ void AdminHousingStats::updateRegionStats(){
 do{
   // specific update
   cout << '\n' << "Which year would you like to update?" << '\n';
-  cout << "Earliest year: " << firstYear <<
-    " Latest Year: " << lastYear << '\n';
+  cout << "Earliest year: " << currentRegion.firstYear <<
+    " Latest Year: " << currentRegion.lastYear << '\n';
   cin >> userYear;//User proof later
-  while(userYear > lastYear || userYear < firstYear)
+  while(userYear > currentRegion.lastYear || userYear < currentRegion.firstYear)
   {
   cout << "**Invalid year given, please enter a year that exists" << 
     "in the following range**" << '\n'<< '\n';    
-  cout << "Earliest year: " << firstYear << '\n' <<
-    "Latest Year: " << lastYear << '\n';
+  cout << "Earliest year: " << currentRegion.firstYear << '\n' <<
+    "Latest Year: " << currentRegion.lastYear << '\n';
   cin >> userYear;  
   }
   
@@ -167,9 +168,9 @@ do{
   userStatChoice = toupper(userStatChoice);//converts user option to upper case
 
    //if statment checks that user year falls within avaliable year range
-  if(userYear >= firstYear && userYear <= lastYear)
+  if(userYear >= currentRegion.firstYear && userYear <= currentRegion.lastYear)
   {
-     int index = userYear - firstYear; //subscript
+     int index = userYear - currentRegion.firstYear; //subscript
 
     //menu option cases to read in up to date data
     //for each stat option
@@ -201,7 +202,7 @@ do{
           " Try Again**" << '\n';
     }
   }
-  displayRegionData(fileName);// prints
+  displayRegionData(currentRegion.fileName);// prints
    
   } while(userStatChoice != 'D');
   
@@ -211,29 +212,29 @@ do{
   
   }while(selectNewYear == 'Y'|| selectNewYear == 'y');
    // opens and clears text file
-   updateOut.open(fileName + txT,ios::out | ios::trunc);
+   updateOut.open(currentRegion.fileName + txT,ios::out | ios::trunc);
 
    // begins the writing to the file
- updateOut << firstYear << '\n'<< lastYear << '\n';
+ updateOut << currentRegion.firstYear << '\n'<< currentRegion.lastYear << '\n';
 
  
  //program sends data  to file
- for(int i = 0;i < yearNum; i++)
+ for(int i = 0;i < currentRegion.yearNum; i++)
  {  
  updateOut << vacancyRate[i] << '\n';
  }
  
- for(int i = 0;i < yearNum; i++)
+ for(int i = 0;i < currentRegion.yearNum; i++)
  {  
  updateOut << avgHomeValue[i] << '\n';
  }
 
- for(int i = 0;i < yearNum; i++)
+ for(int i = 0;i < currentRegion.yearNum; i++)
  {  
  updateOut << homeownershipRate[i] << '\n';
  }
 
- displayRegionData(fileName);// prints
+ displayRegionData(currentRegion.fileName);// prints
   updateOut.close();
    }
 
@@ -250,10 +251,10 @@ cout << setfill(' ') << setw(10) << "Years:" << setw(20) <<
 cout << setfill('-') << setw(71) << '\n';
 
   //formats the indiviual stats to the menu from the arrays
-for(int i = 0; i < yearNum; i++ )
+for(int i = 0; i < currentRegion.yearNum; i++ )
 {
 cout << '|' << setfill(' ') << setw(8);
-cout << firstYear + i << '|'  ;
+cout << currentRegion.firstYear + i << '|'  ;
 
 cout << setw(19) << vacancyRate[i] << '|' ;
 cout << setprecision(0); 
@@ -288,7 +289,7 @@ void AdminHousingStats::setFileName(){
   
   //User prompt for specific region
   cout << '\n'<< "Enter name of region you wish to view/update:" << '\n' ;
-  cin >> fileName;
+  cin >> currentRegion.fileName;
 }
 
 int AdminHousingStats::menuLoop(){
@@ -381,15 +382,15 @@ cout << "Enter the latest year" << '\n' ;
 cin >> newLastYear;  
 }
   
-yearNum = (newLastYear - newFirstYear) + 1;
+currentRegion.yearNum = (newLastYear - newFirstYear) + 1;
 
-vacancyRate = new float(yearNum);
-avgHomeValue = new float(yearNum);
-homeownershipRate = new float(yearNum);
+vacancyRate = new float(currentRegion.yearNum);
+avgHomeValue = new float(currentRegion.yearNum);
+homeownershipRate = new float(currentRegion.yearNum);
 
 cout << '\n' << "Input data for Vacancy rate" << '\n';
 //program recieves data from user
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 cout <<'\n' <<  "Year " << newFirstYear + i << " <-- ";
 cin >> vacancyRate[i];  
@@ -397,7 +398,7 @@ cin >> vacancyRate[i];
   
 cout <<'\n' << "Input data for Avg Home Value" << '\n';
   
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 cout << '\n' <<"Year " << newFirstYear + i << " <-- ";
 cin >> avgHomeValue[i];  
@@ -405,33 +406,33 @@ cin >> avgHomeValue[i];
 
 cout << '\n' << "Input data for Homeownership Rate" << '\n';
   
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 cout << '\n' << "Year " << newFirstYear+ i << " <-- " ;
 cin >> homeownershipRate[i];  
 }
 //Copies data to file
 
-regionUpdate.open(fileName + txT,ios::out | ios::trunc);
+regionUpdate.open(currentRegion.fileName + txT,ios::out | ios::trunc);
 regionUpdate << newFirstYear << '\n'<< newLastYear << '\n';
 
  
 //program sends data  to file
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionUpdate << vacancyRate[i] << '\n';
 }
   
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionUpdate << avgHomeValue[i] << '\n';
 }
 
-for(int i = 0;i < yearNum; i++)
+for(int i = 0;i < currentRegion.yearNum; i++)
 {  
 regionUpdate << homeownershipRate[i] << '\n';
 }
 
-displayRegionData(fileName);// prints
+displayRegionData(currentRegion.fileName);// prints
 regionUpdate.close();
 }
