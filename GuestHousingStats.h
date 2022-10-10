@@ -12,6 +12,3 @@ private:
 //Allows the user to use more of the program if they have the admin password 
 void upgradeUserAccess();
 };
-
-  
-
