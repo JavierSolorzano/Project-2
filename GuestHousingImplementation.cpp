@@ -54,14 +54,16 @@ void GuestHousingStats :: upgradeUserAccess(){
   char redoPassword = 'N';//holds value to rerun prompts
   
   do{
-   cout << "Input password to be able to create and manipulate data" << '\n' << '\n';
+   cout << "Input password to be able to create and manipulate data" 
+     << '\n' << '\n';
    cout << "Admin Access Required Password: " << '\n';
    cin >> passwordInput;
     
     if(password == passwordInput){
      adminUser = true;
     }else{//Allows user to cotinue in the menu or to try again
-     cout << "Incorrect password given. Would you like to try again?" << '\n';  
+     cout << "Incorrect password given. Would you like to try again?" 
+       << '\n';  
      cout << "Input (Y) if so" << '\n';
      cin >> redoPassword;
       
